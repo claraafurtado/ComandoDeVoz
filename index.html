@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Reconhecimento de Voz</title>
+    <style>
+        .words {            
+            height:200px;
+            width: 700px;
+            border: 1px solid gray;
+            overflow-y: scroll;
+        }
+        .words span {
+            font-size: 22px;
+        }
+        .button_speech {
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+   
+    
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <title>Reconhecimento de Voz</title>
+        <style>
+            .words {            
+                height:400px;
+                width: 700px;
+                border: 1px solid black;
+                overflow-y: scroll;
+            }
+            .words span {
+                font-size: 22px;
+            }
+            .button_speech {
+                font-size: 22px;
+            }
+        </style>
+    </head>
+    <body>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Speech Recognition</title>
+        </head>
+        <body>
+            <button id="btn_speech" onclick="doStartStopCheck()">Transcrever Áudio</button>
+            <div class="words"></div>
+        
+            <script>
+                var ongoing = false;
+                var recognition = null;
+        
+                function verificaStatus() {
+                    if (ongoing == true) {
+                        recognition.start();
+                    }
+                }
+        
+                function init() {
+                    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.interimResults = true;
+                    recognition.lang = 'pt-BR';
+        
+                    var p = document.createElement('span');
+                    const words = document.querySelector('.words');
+                    words.appendChild(p);
+        
+                    recognition.addEventListener('result', e => {
+                        const transcript = Array.from(e.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+        
+                        p.textContent = transcript + ", ";
+                        if (e.results[0].isFinal) {
+                            p = document.createElement('span');
+                            words.appendChild(p);
+                        }
+                    });
+                    recognition.addEventListener('end', verificaStatus);
+                    recognition.start();
+                }
+        
+                function doStartStopCheck() {
+                    if (ongoing == true) {
+                        ongoing = false;
+                        recognition.stop();
+                        document.getElementById('btn_speech').innerHTML = "Transcrever Áudio";
+                    } else if (recognition) {
+                        ongoing = true;
+                        recognition.start();
+                        document.getElementById('btn_speech').innerHTML = "Interromper";
+                    } else {
+                        console.log("init");
+                        ongoing = true;
+                        init();
+                        document.getElementById('btn_speech').innerHTML = "Interromper";
+                    }
+                }
+        
+                function rolaScroll() {
+                    const w = document.querySelector('.words');
+                    w.scrollTop = w.scrollHeight;
+                }
+        
+                setInterval(rolaScroll, 1000);
+        
+                recognition.addEventListener('result', function (evt) {
+                    var resultSpeak = evt.results[0][0].transcript;
+        
+                    console.log(resultSpeak);
+                    //resultSpeak.innerHTML = resultSpeak; // Remove this line, as resultSpeak is not an HTML element
+        
+                    switch (resultSpeak.toLowerCase()) {
+                        case 'clarear':
+                            document.body.style.backgroundColor = '#FFFFFF'; // Altera a cor de fundo para clarear
+                            break;
+                        case 'escurecer':
+                            document.body.style.backgroundColor = '#808080'; // Altera a cor de fundo para escurecer
+                            break;
+                    }
+                });
+            </script>
+        </body>
+        </html>
+        
+    </body>
+    </html>
+</body>
+</html>
+ 
